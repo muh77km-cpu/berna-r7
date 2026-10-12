@@ -112,6 +112,47 @@ For the underlying theory (R5):
       year      = {2026},
       doi       = {10.5281/zenodo.23015308}
     }
+## R8 Proof of Concept — Bounded Forgetting
+
+**Status:** ✅ validated (preliminary)
+
+R8 is a follow-up to R7 v3 that fixes 5 architectural issues and implements
+Bounded Forgetting (F_j ≤ 1e-6), the central claim of R5.
+
+### H2 Experiment — Continual Learning
+
+| Metric | Value |
+|--------|-------|
+| Base model | R7 v3 (step_1400) |
+| Fine-tune | 2000 steps on German |
+| `ENG_BEFORE` | 4.0781 |
+| `ENG_AFTER` | 4.0703 |
+| **`F_eng`** | **0.000000** ✅ |
+| `DE_BEFORE` | 4.7406 |
+| `DE_AFTER` | 4.0797 |
+| **Bounded?** | **Yes** |
+
+**Interpretation:** Fine-tuning on German improved German loss by 0.66
+while preserving English loss. This is the first empirical evidence that
+the DNA-Kernel Plexus architecture can learn new languages without
+catastrophic forgetting.
+
+### R8 Deliverables
+
+| Item | Location |
+|------|----------|
+| Model weights | [`BernaLabs/berna-r8`](https://huggingface.co/BernaLabs/berna-r8) |
+| Code (fixes) | `BernaLabs/berna-r8/code/` |
+| Fixes applied | K5, K6, K2 per-cell; Plexus; DNA persistence; CellFreezer |
+
+### Fixes over R7 v3
+
+1. K5 (Freshness) — was constant 0.9048 → now per-cell
+2. K6 (Encompassment) — was global 0.6138 → now per-cell
+3. K2 (Breadth) — was stub 0.0 → now per-cell
+4. Plexus — was 0 edges → threshold lowered 0.5 → 0.1
+5. DNA persistence — was 112/1680 → now `save_all_dna()` for all cells
+6. **Bounded Forgetting** — new `CellFreezer` + freeze hooks
 
 ## License
 
